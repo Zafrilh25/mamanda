@@ -53,7 +53,7 @@ export const PROMPT_TEMPLATE = `Create an ultra-photorealistic cinematic editori
 The subject is a realistic {descriptor} Indonesian model wearing the exact, complete outfit (details, colors, fabric texture) 
 from the uploaded product photo.
 
-Setting: A professional photo studio with a plain, seamless, solid light-gray background.
+Setting: A professional photo studio with a plain, seamless, solid white background.
 
 Pose:
 As the Photographer, creatively innovate a natural, elegant pose and shot composition that best highlights the outfit 

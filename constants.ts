@@ -73,7 +73,7 @@ eye-level framing.
 
 Negative Prompt:
 harsh shadows, direct sunlight, oversaturated colors, busy background, distorted anatomy, 
-unrealistic skin, cartoon, 3D render, poorly drawn hands, text, extra watermark, blurry product, mismatched outfit.`;
+unrealistic skin, cartoon, 3D render, poorly drawn hands, text, extra watermark, blurry product, mismatched outfit, mannequin, pedestal, stand, base, circular base, display stand, studio prop, podium.`;
 
 export const MAX_PRODUCT_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 export const MAX_LOGO_SIZE_BYTES = 5 * 1024 * 1024; // 5MB

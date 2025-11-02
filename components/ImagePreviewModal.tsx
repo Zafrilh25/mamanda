@@ -1,12 +1,5 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon, DownloadIcon, ZoomInIcon } from './Icons';
-
-declare global {
-    interface Window {
-        JSZip: any;
-    }
-}
 
 interface ImagePreviewModalProps {
   images: string[];
@@ -17,7 +10,6 @@ interface ImagePreviewModalProps {
 const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ images, startIndex, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(startIndex);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const goToPrevious = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
@@ -47,36 +39,6 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ images, startInde
     link.click();
     document.body.removeChild(link);
   };
-  
-  const handleDownloadAll = async () => {
-    if (!window.JSZip) {
-      alert('Could not download all files. JSZip library not found.');
-      return;
-    }
-    setIsDownloading(true);
-    const zip = new window.JSZip();
-    images.forEach((src, index) => {
-      const base64Data = src.split(',')[1];
-      zip.file(`fashion_editorial_${index + 1}.png`, base64Data, { base64: true });
-    });
-    
-    try {
-        const content = await zip.generateAsync({ type: 'blob' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(content);
-        link.download = 'fashion_product_studio_images.zip';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-    } catch (error) {
-        console.error("Error creating zip file", error);
-        alert("Failed to create zip file.");
-    } finally {
-        setIsDownloading(false);
-    }
-  };
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50" onClick={onClose}>
@@ -117,10 +79,6 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ images, startInde
                 <span>Download</span>
             </button>
             <div className="w-px h-6 bg-white/30"></div>
-            <button onClick={handleDownloadAll} disabled={isDownloading} className="flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-wait">
-                {isDownloading ? <><span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span><span>Zipping...</span></> : <> <DownloadIcon className="w-5 h-5" /><span>Download All (ZIP)</span></>}
-            </button>
-             <div className="w-px h-6 bg-white/30"></div>
             <p className="text-white font-medium">{currentIndex + 1} / {images.length}</p>
         </div>
       </div>

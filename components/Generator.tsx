@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Age, FileWithPreview, Gender, AspectRatio } from '../types';
 import { GENDER_OPTIONS, AGE_OPTIONS, MAX_PRODUCT_SIZE_BYTES, MAX_LOGO_SIZE_BYTES, ACCEPTED_IMAGE_TYPES, ASPECT_RATIO_OPTIONS } from '../constants';
@@ -6,7 +5,7 @@ import { generateEditorialImages } from '../services/geminiService';
 import ResultsDisplay from './ResultsDisplay';
 import Spinner from './ui/Spinner';
 import Toast from './ui/Toast';
-import { UploadIcon } from './Icons';
+import { UploadIcon, DownloadIcon } from './Icons';
 
 // Sub-component for file input
 const FileInput: React.FC<{
@@ -66,6 +65,12 @@ const FileInput: React.FC<{
   );
 };
 
+declare global {
+    interface Window {
+        JSZip: any;
+    }
+}
+
 const Generator: React.FC = () => {
   const [productImage, setProductImage] = useState<FileWithPreview | null>(null);
   const [logoImage, setLogoImage] = useState<FileWithPreview | null>(null);
@@ -74,6 +79,7 @@ const Generator: React.FC = () => {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Portrait);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileErrors, setFileErrors] = useState<{ product?: string; logo?: string }>({});
 
@@ -149,6 +155,35 @@ const Generator: React.FC = () => {
       setIsLoading(false);
     }
   }, [productImage, logoImage, gender, age, aspectRatio, isFormValid]);
+
+  const handleDownloadAll = async () => {
+    if (!window.JSZip) {
+      alert('Could not download all files. JSZip library not found.');
+      return;
+    }
+    setIsDownloading(true);
+    const zip = new window.JSZip();
+    generatedImages.forEach((src, index) => {
+      const base64Data = src.split(',')[1];
+      zip.file(`fashion_editorial_${index + 1}.png`, base64Data, { base64: true });
+    });
+    
+    try {
+        const content = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = 'fashion_product_studio_images.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    } catch (error) {
+        console.error("Error creating zip file", error);
+        alert("Failed to create zip file.");
+    } finally {
+        setIsDownloading(false);
+    }
+  };
   
   return (
     <div id="generator" className="py-12 md:py-20 bg-gray-50">
@@ -250,8 +285,31 @@ const Generator: React.FC = () => {
             </form>
           </div>
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-gray-800">Hasil Foto Editorial</h2>
-            <p className="mt-2 text-gray-600">AI akan menghasilkan 4 variasi foto profesional untuk Anda.</p>
+            <div className="flex justify-between items-start">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-800">Hasil Foto Editorial</h2>
+                    <p className="mt-2 text-gray-600">AI akan menghasilkan 4 variasi foto profesional untuk Anda.</p>
+                </div>
+                {!isLoading && generatedImages.length > 0 && (
+                    <button 
+                        onClick={handleDownloadAll} 
+                        disabled={isDownloading}
+                        className="flex-shrink-0 flex items-center gap-2 bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm border border-gray-300 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait"
+                    >
+                        {isDownloading ? (
+                            <>
+                                <span className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+                                <span>Zipping...</span>
+                            </>
+                        ) : (
+                            <>
+                                <DownloadIcon className="w-5 h-5" />
+                                <span>Download All (ZIP)</span>
+                            </>
+                        )}
+                    </button>
+                )}
+            </div>
             <div className="mt-6">
                 <ResultsDisplay images={generatedImages} isLoading={isLoading} />
             </div>

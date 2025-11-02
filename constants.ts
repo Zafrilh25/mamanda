@@ -49,6 +49,67 @@ export const ASPECT_RATIO_DESCRIPTION_MAP: Record<AspectRatio, string> = {
     [AspectRatio.Landscape]: 'landscape 16:9 ratio',
 };
 
+export const MASTER_POSE_LIST = [
+  // --- DAFTAR POSE BERDIRI (25) ---
+  // Gaya Percaya Diri
+  'Standing tall, looking directly at the camera with a neutral, confident expression.',
+  'Standing with one hand on hip, the other arm relaxed, slight smile.',
+  'Standing with legs slightly crossed, hands resting lightly on hips.',
+  'Facing 45 degrees away from camera, looking back over the shoulder.',
+  'Standing with a wide, strong stance, arms folded across the chest.',
+  'Power pose, standing tall, hands firmly placed on waist.',
+  // Gaya Santai & Kasual
+  'Standing relaxed, hands casually slipped into pockets.',
+  'Leaning slightly against a simple white prop (like a block), very relaxed.',
+  'Standing with one foot forward, body weight on the back foot, looking off-camera.',
+  'Standing with feet shoulder-width apart, arms hanging naturally at the sides.',
+  'Natural pose, one hand lightly touching the face or chin, thoughtful expression.',
+  'Standing with one hand lightly brushing hair back.',
+  'Profile shot (pose samping), model standing straight, looking forward.',
+  'Three-quarter back pose, model standing, looking slightly to the side.',
+  // Gaya Interaktif & Dinamis
+  'Standing, one hand lightly holding the collar or lapel of the outfit.',
+  'Standing, lightly touching or interacting with an accessory (e.g., bag, hat).',
+  'Mid-walk pose, captured as if taking a step forward, natural movement.',
+  'Slightly dynamic pose, one arm raised, showing the flow of the sleeve.',
+  'Pose interacting with the outfit, like adjusting a cufflink or button.',
+  'Playful pose, slight jump or hop, capturing fabric in motion.',
+  'Standing, looking down at the outfit as if admiring it.',
+  'Spinning motion pose, capturing the skirt or fabric flowing outwards.',
+  'Standing on tiptoes, arms slightly raised, elegant and elongated.',
+  'Pose with arms outstretched to the sides, open and free.',
+  'Standing, hugging oneself lightly, conveying comfort or texture.',
+  // --- DAFTAR POSE DUDUK (15) ---
+  // Duduk di Balok/Bangku Sederhana
+  'Seated on a low white stool, facing camera, knees together.',
+  'Seated on a simple block, legs casually crossed at the ankle.',
+  'Seated, leaning forward, elbows resting on knees, looking thoughtful.',
+  'Seated sideways on a stool, looking back at the camera.',
+  'Seated, one leg extended, the other bent, showing off footwear.',
+  'Relaxed seated pose, leaning back slightly, supported by arms on the stool.',
+  'Seated on a high stool, one foot on the rung, the other dangling.',
+  // Duduk di Lantai
+  'Seated on the floor, legs tucked neatly to one side.',
+  'Seated on the floor, legs crossed ("lotus" style), hands on knees.',
+  'Seated on the floor, hugging knees, looking at the camera.',
+  'Lying on side on the floor, propped up on one elbow, relaxed.',
+  'Seated on the floor, back against a white block, relaxed posture.',
+  'Seated on the floor, legs extended straight out, hands resting on floor behind.',
+  'Kneeling pose on the floor, body upright, looking at camera.',
+  'Crouching pose, balanced on toes, looking intense or playful.',
+  // --- DAFTAR POSE KONSEPTUAL (10) ---
+  'Strong silhouette pose, body angled to create a clear shape.',
+  'Mirrored pose, as if looking at a reflection (no mirror shown).',
+  'Geometric pose, creating angles with arms and legs, like a dancer.',
+  'Floating pose, captured mid-air in a graceful jump.',
+  'Abstract pose, interacting with the floor, creating interesting shapes.',
+  'Minimalist pose, standing completely still, arms perfectly straight at sides.',
+  'Dramatic pose, one arm reaching up, creating a long vertical line.',
+  'Candid laughter pose, model looking away, genuinely smiling.',
+  'Contemplative pose, model walking slowly, looking down.',
+  'Elegant finish pose, like a ballerina finishing a move, head tilted.'
+];
+
 export const PROMPT_TEMPLATE = `Create an ultra-photorealistic cinematic editorial fashion portrait in a {aspectRatioDescription}.
 The subject is a realistic {descriptor} Indonesian model wearing the exact, complete outfit (details, colors, fabric texture) 
 from the uploaded product photo.
@@ -56,9 +117,10 @@ from the uploaded product photo.
 Setting: A professional photo studio with a plain, seamless, solid white background.
 
 Pose:
-As the Photographer, creatively innovate a natural, elegant pose and shot composition that best highlights the outfit 
-and the model’s personality — while maintaining a clean, airy, cinematic studio aesthetic.
-(Examples: full-body shot showing the outfit’s flow, half-body highlighting fabric, or a candid seated pose that feels spontaneous yet graceful.)
+{poseInstruction}
+
+As the Photographer, execute this specific pose while maintaining a clean, airy, cinematic studio aesthetic
+and highlighting the outfit and the model's personality.
 
 Expression: calm, dreamy, and inviting, with subtle emotional depth fitting the cinematic tone.
 

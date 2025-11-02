@@ -1,6 +1,7 @@
+
 import { GoogleGenAI, Modality } from "@google/genai";
 import { Gender, Age, AspectRatio } from '../types';
-import { DESCRIPTOR_MAP, PROMPT_TEMPLATE, ASPECT_RATIO_DESCRIPTION_MAP } from '../constants';
+import { DESCRIPTOR_MAP, PROMPT_TEMPLATE } from '../constants';
 import { fileToGenerativePart } from '../utils/fileUtils';
 
 // This function assumes `process.env.API_KEY` is set in the environment
@@ -24,18 +25,17 @@ export const generateEditorialImages = async (
   try {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const descriptor = DESCRIPTOR_MAP[gender][age];
-    const aspectRatioDescription = ASPECT_RATIO_DESCRIPTION_MAP[aspectRatio];
+    // The aspect ratio is now handled by the imageConfig, so we replace the prompt placeholder with an empty string.
     const prompt = PROMPT_TEMPLATE
       .replace('{descriptor}', descriptor)
-      .replace('{aspectRatioDescription}', aspectRatioDescription);
+      .replace('{aspectRatioDescription}', '');
 
 
     const productPart = await fileToGenerativePart(productImage);
     const logoPart = await fileToGenerativePart(logoImage);
 
     const generateImage = async () => {
-      // Fix: Removed `imageConfig` from the config object. The `gemini-2.5-flash-image` model
-      // does not support the `imageConfig` parameter. The aspect ratio is controlled via the prompt.
+      // Re-added imageConfig to control the aspect ratio of the generated image.
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
@@ -47,6 +47,9 @@ export const generateEditorialImages = async (
         },
         config: {
           responseModalities: [Modality.IMAGE],
+          imageConfig: {
+            aspectRatio: aspectRatio
+          }
         },
       });
 
